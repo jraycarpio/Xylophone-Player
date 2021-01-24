@@ -55,9 +55,20 @@ void hitKey()
 // Move to specified xylophone key and record position
 int movePos(int desired, int currentPos)
 {
-   location.write(desired);
-   currentPos = currentPos + desired;
-   return currentPos; 
+  currentPos = currentPos + desired;
+
+  if (currentPos < 0) {
+      while (true) {
+        Serial.print("\n\nERROR: NEGATIVE POSITION CALCULATED = (");
+        Serial.print(currentPos);
+        Serial.println(" steps).  CANNOT MOVE SERVO.\n\n");
+        delay(5000);
+      }
+    }
+  
+  
+  location.write(desired);
+  return currentPos; 
 }
 
 
@@ -125,15 +136,15 @@ void setup()
   Serial.println("1...");
   delay(1000);
 
-  Serial.println("Calibrating servos...");
+  Serial.println("\nCalibrating servos...");
   beatStick.attach(3);
   location.attach(5);
 
   delay(500);
 
   beatStick.write(110);
-  location.write(0);
-  position = 0;
+  location.write(10);
+  position = 10;
 
   delay(1000);
 
@@ -162,7 +173,7 @@ void loop()
 
   // Loop function: move to each consecutive step in the Rugrats song array and hit the key
   for (int i = 0; i <= size; i++) {
-   
+
     position = movePos(rugrats[i], position);
     hitKey();
 
@@ -261,12 +272,12 @@ void loop()
   // Return to starting point
   Serial.println("Resetting robot...");
   position = returnStart(position);
-  Serial.print("Current position: ");
+  Serial.print("\nCurrent position: ");
   Serial.println(position);
   
   delay(1000);
   
-  Serial.println("Restarting sequence in 5 seconds...\n");
+  Serial.println("\nRestarting sequence in 5 seconds...\n");
   
   delay(5000);
 
