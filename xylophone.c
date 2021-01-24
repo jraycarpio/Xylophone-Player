@@ -11,21 +11,22 @@
 
 
 
-// Include libraries
+// -------------------------------------------
+// Include stepper and servo libraries
+// -------------------------------------------
 #include <Stepper.h>
 #include <Servo.h>
 
 
+
+// ===========================================
+// ===========================================
 
 
 
 // -------------------------------------------
 // Definitions, constants, functions
 // -------------------------------------------
-
-
-
-
 
 // ___________ STEPPER ___________
 
@@ -42,11 +43,6 @@ const float STEPS_PER_OUT_REV = STEPS_PER_REV * GEAR_RED;
 
 // *****2048 steps for 1 full revolution*****
 
-// Define Variables:
-
-// Number of Steps Required
-int StepsRequired;
-
 // Create Instance of Stepper Class
 // Specify Pins used for motor coils
 // The pins used are 8,9,10,11 
@@ -58,6 +54,7 @@ Stepper steppermotor(STEPS_PER_REV, 8, 10, 9, 11);
 int stepperPos;
 
 // ___________ END STEPPER ___________
+// ___________________________________
 
 
 
@@ -66,6 +63,7 @@ int stepperPos;
 Servo myservo;
 
 // ___________ END SERVO ___________
+// _________________________________
 
 
 
@@ -76,6 +74,7 @@ boolean switchHit;
 int switchState = 0;
 
 // ___________ END LIMIT SWITCH ___________
+// ________________________________________
 
 
 // ___________ DEFINE FUNCTIONS ___________
@@ -107,6 +106,7 @@ int returnStart(int currentPos)
 }
 
 // ___________ END FUNCTIONS ___________
+// _____________________________________
 
 
 
@@ -117,30 +117,28 @@ int note = 410;
 
 // Define song sequence as a set of motor positions
 // Note that the first note will be the starting position of the robot
-int rugrats[] = {0, note, note, note, note, note, (-1)*note, (-2)*note, note, (-1)*note, (-1)*note,   note, note, note, note, note, note, note, (-2)*note, note, (-1)*note, (-1)*note,   note, note, note, note, note, note, (-1)*note, (-2)*note, note, (-1)*note, (-1)*note,   note, note, note, note, note, note, note, (-1)*note, (-1)*note, (-1)*note, (-1)*note, (-1)*note, (-1)*note};
+int rugrats[] = {0, note, note, note, note, note, (-1)*note, (-2)*note, note, (-1)*note, (-1)*note,   (-1)*note, note, note, note, note, note, note, (-2)*note, note, (-1)*note, (-1)*note,   (-3)*note, note, note, note, note, note, (-1)*note, (-2)*note, note, (-1)*note, (-1)*note,   (-1)*note, note, note, note, note, note, note, (-1)*note, (-1)*note, (-1)*note, (-1)*note, (-1)*note, (-1)*note};
 
 int count = 500;  // Delay between certain notes
 int size = 45;    // Size of song array
 
 // ___________ END RUGRATS SONG ___________
+// ________________________________________
+
+
+
+
+
+// ===========================================
+// ===========================================
 
 
 
 
 
 // -------------------------------------------
-// End definitions, constants, functions
+// System setup
 // -------------------------------------------
-
-
-
-
-
-/*
- * -------------
- * SYSTEM SETUP
- * -------------
- */
 
 void setup()
 {
@@ -159,10 +157,6 @@ void setup()
   delay(2000);
   Serial.println("SYSTEM STARTING IN\n");
   delay(500);
-  Serial.println("5...");
-  delay(1000);
-  Serial.println("4...");
-  delay(1000);
   Serial.println("3...");
   delay(1000);
   Serial.println("2...");
@@ -176,17 +170,16 @@ void setup()
   
   switchHit = false;
   steppermotor.setSpeed(1000);    
-  int Steps  =  -205;
   
   while (switchHit == false) {
-    steppermotor.step(Steps);
+    steppermotor.step(-205);
     switchState = digitalRead(LSWITCH);
 
     if (switchState = HIGH) {
       Serial.println("\nLIMIT SWITCH HIT.\n");
       switchHit = true;
     } else {
-      Serial.println("Limit not yet determined.");
+      Serial.println("Moving to bottom limit...");
     }
 
     delay(750);
@@ -196,35 +189,24 @@ void setup()
   // Step 250 will be starting point of robot
   stepperPos = moveStepper(250, 0);
   
-  Serial.println("\nCalibration complete.");
-  Serial.println("\n\n");
-  
+  Serial.println("\nCalibration complete.\n");
   delay(1000);
 }
 
 
 
+// ===========================================
+// ===========================================
 
 
-/*
- * -------------
- * LOOP SEQUENCE
- * -------------
- */
+
+// -------------------------------------------
+// Loop sequence
+// -------------------------------------------
 
 void loop()
 {
   Serial.println("Now playing: Rugrats Theme Song\n\n");
-  delay(1000);
-  Serial.println("Starting in 5...");
-  delay(1000);
-  Serial.println("Starting in 4...");
-  delay(1000);
-  Serial.println("Starting in 3...");
-  delay(1000);
-  Serial.println("Starting in 2...");
-  delay(1000);
-  Serial.println("Starting in 1...\n\n\n");
   delay(1000);
 
   // Loop function: move to each consecutive step in the Rugrats song array and hit the key
@@ -239,7 +221,7 @@ void loop()
     Serial.print(", ");
     Serial.print(rugrats[i]);
     Serial.println(" step size");
-    Serial.println("Current position is: ");
+    Serial.print("Current position is: ");
     Serial.println(stepperPos);
 
     // Delay the time between certain notes
@@ -293,22 +275,19 @@ void loop()
       delay(count);
     }
 
-
     Serial.println();
-    
     
   }
 
-  Serial.println("FINISHED.");
+  Serial.println("\nFINISHED.");
   delay(2000);
 
-  // Return to starting point
+  // Return to starting point and restart loop sequence
   Serial.println("Resetting robot...");
   stepperPos = returnStart(stepperPos);
-  Serial.print("Current position: \n");
+  Serial.print("Current position: ");
   Serial.println(stepperPos);
   delay(1000);
-  
   Serial.println("Restarting sequence in 5 seconds...\n");
   delay(5000);
 
