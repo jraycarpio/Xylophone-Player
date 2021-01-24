@@ -164,9 +164,9 @@ void setup()
       Serial.println("Limit not yet determined.");
 
 
-      // SIMULATION__________
-      Serial.println("starting simulation in 5 seconds");
-      switchHit = true;
+      // UNCOMMENT FOR SIMULATION
+      // Serial.println("starting simulation in 5 seconds");
+      // switchHit = true;
     }
 
     delay(500);
@@ -272,6 +272,10 @@ void loop()
 
   // Return to starting point
   stepperPos = returnStart(stepperPos);
+  Serial.println("Reset robot.");
+  Serial.print("Current position: ");
+  Serial.println(stepperPos);
+  delay(1000);
   
   Serial.println("Restarting sequence in 5 seconds...\n");
   delay(5000);
