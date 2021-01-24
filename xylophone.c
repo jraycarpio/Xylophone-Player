@@ -27,6 +27,7 @@
 
 
 // ___________ STEPPER ___________
+
 // Define Constants:
 
 // Number of steps per internal motor revolution 
@@ -60,20 +61,23 @@ int stepperPos;
 
 
 // ___________ SERVO ___________
+
 Servo myservo;
+
 // ___________ END SERVO ___________
 
 
 
 // ___________ LIMIT SWITCH ___________
+
 const int LSWITCH = 2;
 boolean switchHit;
 int switchState = 0;
+
 // ___________ END LIMIT SWITCH ___________
 
 
 // ___________ DEFINE FUNCTIONS ___________
-
 
 void hitKey()
 {
@@ -90,16 +94,28 @@ int moveStepper(int desired, int currentPos)  // Also writes/records position
   return position;
 }
 
+int returnStart(int currentPos)
+{
+  int returnVal = currentPos - 250;
+  returnVal = (-1) * returnVal;
+  int restart = steppermotor.step(returnVal);
+  return restart;
+}
+
 // ___________ END FUNCTIONS ___________
 
 
 
 // ___________ RUGRATS SONG ___________
 
+
 int note = 410;
-int rugrats[] = {note, note, note, note, note, note, (-1)*note, (-2)*note, note, (-1)*note, (-1)*note,   note, note, note, note, note, note, note, (-2)*note, note, (-1)*note, (-1)*note,   note, note, note, note, note, note, (-1)*note, (-2)*note, note, (-1)*note, (-1)*note,   note, note, note, note, note, note, note, (-1)*note, (-1)*note, (-1)*note, (-1)*note, (-1)*note, (-1)*note};
-int count = 500;
-int size = 45;
+
+// Note that the first note will be the starting position of the robot
+int rugrats[] = {0, note, note, note, note, note, (-1)*note, (-2)*note, note, (-1)*note, (-1)*note,   note, note, note, note, note, note, note, (-2)*note, note, (-1)*note, (-1)*note,   note, note, note, note, note, note, (-1)*note, (-2)*note, note, (-1)*note, (-1)*note,   note, note, note, note, note, note, note, (-1)*note, (-1)*note, (-1)*note, (-1)*note, (-1)*note, (-1)*note};
+
+int count = 500;  // Delay between certain notes
+int size = 45;    // Size of song array
 
 // ___________ END RUGRATS SONG ___________
 
@@ -121,7 +137,7 @@ void setup()
   pinMode(LSWITCH, INPUT);
   
   Serial.begin(9600);
-  Serial.println("\nBREAK ----");
+  Serial.println("\n\nBREAK ----");
   Serial.println("BREAK ----");
   Serial.println("BREAK ----");
   Serial.println("BREAK ----");
@@ -142,10 +158,15 @@ void setup()
     switchState = digitalRead(LSWITCH);
 
     if (switchState = HIGH) {
-      Serial.println("\nLimit switch hit.\n");
+      Serial.println("\nLIMIT SWITCH HIT.\n");
       switchHit = true;
     } else {
       Serial.println("Limit not yet determined.");
+
+
+      // SIMULATION__________
+      Serial.println("starting simulation in 5 seconds");
+      switchHit = true;
     }
 
     delay(500);
@@ -154,15 +175,28 @@ void setup()
   // Move stepper motor 250 steps and define current position.  
   // Step 250 will be starting point of robot.
   stepperPos = moveStepper(250, 0);
+  
   Serial.println("\nCalibration complete.");
   Serial.println("\n\n");
   
-  
+  delay(1000);
 }
 
 void loop()
 {
   Serial.println("Now playing: Rugrats Theme Song\n\n");
+  delay(1000);
+  Serial.println("Starting in 5...");
+  delay(1000);
+  Serial.println("Starting in 4...");
+  delay(1000);
+  Serial.println("Starting in 3...");
+  delay(1000);
+  Serial.println("Starting in 2...");
+  delay(1000);
+  Serial.println("Starting in 1...\n");
+  delay(1000);
+  Serial.println("\n\n");
   
   for (int i = 0; i <= size; i++) {
    
@@ -174,8 +208,8 @@ void loop()
     Serial.println("Current position is: ");
     Serial.println(stepperPos);
 
-    hitKey();
     stepperPos = moveStepper(rugrats[i], stepperPos);
+    hitKey();
 
     if (i == 5) {
       Serial.println("Delay 500 ms");
@@ -233,19 +267,13 @@ void loop()
     
   }
 
-  Serial.println("FINISHED...");
-  delay(2000);
-  Serial.println("Starting again in 5...");
+  Serial.println("FINISHED.");
   delay(1000);
-  Serial.println("Starting again in 4...");
-  delay(1000);
-  Serial.println("Starting again in 3...");
-  delay(1000);
-  Serial.println("Starting again in 2...");
-  delay(1000);
-  Serial.println("Starting again in 1...\n");
-  delay(1000);
-  
 
+  // Return to starting point
+  stepperPos = returnStart(stepperPos);
+  
+  Serial.println("Restarting sequence in 5 seconds...\n");
+  delay(5000);
 
 }
