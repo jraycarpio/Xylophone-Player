@@ -98,7 +98,7 @@ int returnStart(int currentPos)
 {
   int returnVal = currentPos - 250;
   returnVal = (-1) * returnVal;
-  int restart = steppermotor.step(returnVal);
+  int restart = moveStepper(returnVal, currentPos);
   return restart;
 }
 
