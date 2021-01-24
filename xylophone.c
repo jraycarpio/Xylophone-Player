@@ -16,9 +16,13 @@
 
 
 
+
+
 // -------------------------------------------
-// Pre-code setup
+// Definitions, constants, functions
 // -------------------------------------------
+
+
 
 
 
@@ -97,10 +101,17 @@ int rugrats[] = {note, note, note, note, note, note, (-1)*note, (-2)*note, note,
 int count = 500;
 int size = 45;
 
-//
+// ___________ END RUGRATS SONG ___________
 
 
-// ___________ END PRE-CODE SETUP ___________
+
+
+
+// -------------------------------------------
+// End definitions, constants, functions
+// -------------------------------------------
+
+
 
 
 
