@@ -63,7 +63,8 @@ Servo myservo;
 
 // ___________ LIMIT SWITCH ___________
 const int LSWITCH = 2;
-boolean switchHit = false;
+boolean switchHit;
+int switchState = 0;
 // ___________ END LIMIT SWITCH ___________
 
 
@@ -109,7 +110,7 @@ void setup()
   pinMode(LSWITCH, INPUT);
   
   Serial.begin(9600);
-  Serial.println("BREAK ----");
+  Serial.println("\nBREAK ----");
   Serial.println("BREAK ----");
   Serial.println("BREAK ----");
   Serial.println("BREAK ----");
@@ -120,31 +121,29 @@ void setup()
     
   // Calibration sequence
   Serial.println("Calibrating...");
+  
+  switchHit = false;
   steppermotor.setSpeed(1000);    
   int Steps  =  -205;
-  switchHit = false;
+  
   while (switchHit == false) {
     steppermotor.step(Steps);
+    switchState = digitalRead(LSWITCH);
 
-    // FOR SIMULATION
-    Serial.println("SIMULATION: Not hit yet..");
-    delay(1000);
-    Serial.println("SIMULATION: Not hit yet..");
-    steppermotor.step(Steps);
-    delay(1000);
-    Serial.println("SIMULATION: Not hit yet..");
-    steppermotor.step(Steps);
-    delay(1000);
-    Serial.println("SIMULATION: LIMIT SWITCH HIT!!");
+    if (switchState = HIGH) {
+      Serial.println("\nLimit switch hit.\n");
+      switchHit = true;
+    } else {
+      Serial.println("Limit not yet determined.");
+    }
+
     delay(500);
-    switchHit = true;
-    // END SIM
   }
 
   // Move stepper motor 250 steps and define current position.  
   // Step 250 will be starting point of robot.
   stepperPos = moveStepper(250, 0);
-  Serial.println("Calibration complete.");
+  Serial.println("\nCalibration complete.");
   Serial.println("\n\n");
   
   
@@ -152,9 +151,10 @@ void setup()
 
 void loop()
 {
+  Serial.println("Now playing: Rugrats Theme Song\n\n");
   
   for (int i = 0; i <= size; i++) {
-    hitKey();
+   
     Serial.print("STEP ------ ");
     Serial.print(i);
     Serial.print(", ");
@@ -163,6 +163,7 @@ void loop()
     Serial.println("Current position is: ");
     Serial.println(stepperPos);
 
+    hitKey();
     stepperPos = moveStepper(rugrats[i], stepperPos);
 
     if (i == 5) {
@@ -231,7 +232,7 @@ void loop()
   delay(1000);
   Serial.println("Starting again in 2...");
   delay(1000);
-  Serial.println("Starting again in 1...");
+  Serial.println("Starting again in 1...\n");
   delay(1000);
   
 
