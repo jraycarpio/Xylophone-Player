@@ -11,6 +11,7 @@
 
 
 
+// Include libraries
 #include <Stepper.h>
 #include <Servo.h>
 
@@ -79,6 +80,7 @@ int switchState = 0;
 
 // ___________ DEFINE FUNCTIONS ___________
 
+// Hit xylophone key
 void hitKey()
 {
   myservo.write(90);
@@ -87,19 +89,21 @@ void hitKey()
   delay(200);
 }
 
-int moveStepper(int desired, int currentPos)  // Also writes/records position
+// Move to desired key and record current position
+int moveStepper(int desired, int currentPos)
 {
   steppermotor.step(desired);
   int position = currentPos + desired;
   return position;
 }
 
+// Reset robot and return to starting position
 int returnStart(int currentPos)
 {
   int returnVal = currentPos - 250;
   returnVal = (-1) * returnVal;
-  int restart = moveStepper(returnVal, currentPos);
-  return restart;
+  steppermotor.step(returnVal);
+  return 250;
 }
 
 // ___________ END FUNCTIONS ___________
@@ -108,9 +112,10 @@ int returnStart(int currentPos)
 
 // ___________ RUGRATS SONG ___________
 
-
+// Standard step size for moving to next note
 int note = 410;
 
+// Define song sequence as a set of motor positions
 // Note that the first note will be the starting position of the robot
 int rugrats[] = {0, note, note, note, note, note, (-1)*note, (-2)*note, note, (-1)*note, (-1)*note,   note, note, note, note, note, note, note, (-2)*note, note, (-1)*note, (-1)*note,   note, note, note, note, note, note, (-1)*note, (-2)*note, note, (-1)*note, (-1)*note,   note, note, note, note, note, note, note, (-1)*note, (-1)*note, (-1)*note, (-1)*note, (-1)*note, (-1)*note};
 
@@ -131,6 +136,12 @@ int size = 45;    // Size of song array
 
 
 
+/*
+ * -------------
+ * SYSTEM SETUP
+ * -------------
+ */
+
 void setup()
 {
   myservo.attach(3);
@@ -144,6 +155,20 @@ void setup()
   Serial.println();
   Serial.println();
   Serial.println();
+
+  delay(2000);
+  Serial.println("SYSTEM STARTING IN\n");
+  delay(500);
+  Serial.println("5...");
+  delay(1000);
+  Serial.println("4...");
+  delay(1000);
+  Serial.println("3...");
+  delay(1000);
+  Serial.println("2...");
+  delay(1000);
+  Serial.println("1...\n\n");
+  delay(1000);
 
     
   // Calibration sequence
@@ -162,18 +187,13 @@ void setup()
       switchHit = true;
     } else {
       Serial.println("Limit not yet determined.");
-
-
-      // UNCOMMENT FOR SIMULATION
-      // Serial.println("starting simulation in 5 seconds");
-      // switchHit = true;
     }
 
-    delay(500);
+    delay(750);
   }
 
-  // Move stepper motor 250 steps and define current position.  
-  // Step 250 will be starting point of robot.
+  // Move stepper motor 250 steps and define current position  
+  // Step 250 will be starting point of robot
   stepperPos = moveStepper(250, 0);
   
   Serial.println("\nCalibration complete.");
@@ -181,6 +201,16 @@ void setup()
   
   delay(1000);
 }
+
+
+
+
+
+/*
+ * -------------
+ * LOOP SEQUENCE
+ * -------------
+ */
 
 void loop()
 {
@@ -194,12 +224,16 @@ void loop()
   delay(1000);
   Serial.println("Starting in 2...");
   delay(1000);
-  Serial.println("Starting in 1...\n");
+  Serial.println("Starting in 1...\n\n\n");
   delay(1000);
-  Serial.println("\n\n");
-  
+
+  // Loop function: move to each consecutive step in the Rugrats song array and hit the key
   for (int i = 0; i <= size; i++) {
    
+    stepperPos = moveStepper(rugrats[i], stepperPos);
+    hitKey();
+
+    // Update status on serial monitor
     Serial.print("STEP ------ ");
     Serial.print(i);
     Serial.print(", ");
@@ -208,9 +242,7 @@ void loop()
     Serial.println("Current position is: ");
     Serial.println(stepperPos);
 
-    stepperPos = moveStepper(rugrats[i], stepperPos);
-    hitKey();
-
+    // Delay the time between certain notes
     if (i == 5) {
       Serial.println("Delay 500 ms");
       delay(count);
@@ -222,7 +254,7 @@ void loop()
     }
 
     if (i == 10) {
-      Serial.println("Delay 700 seconds");
+      Serial.println("Delay 700 ms");
       delay(count+200);
     }
 
@@ -268,12 +300,12 @@ void loop()
   }
 
   Serial.println("FINISHED.");
-  delay(1000);
+  delay(2000);
 
   // Return to starting point
+  Serial.println("Resetting robot...");
   stepperPos = returnStart(stepperPos);
-  Serial.println("Reset robot.");
-  Serial.print("Current position: ");
+  Serial.print("Current position: \n");
   Serial.println(stepperPos);
   delay(1000);
   
