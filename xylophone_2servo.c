@@ -10,17 +10,11 @@
  * 
  */
 
+// ============================================================================================================================================================================
 
 
-// -------------------------------------------
-// Include servo library
-// -------------------------------------------
+
 #include <Servo.h>
-
-
-
-// ===========================================
-// ===========================================
 
 
 
@@ -45,9 +39,9 @@ int position;
 // Hit xylophone key
 void hitKey()
 {
-  beatStick.write(90);
-  delay(200);
   beatStick.write(110);
+  delay(200);
+  beatStick.write(90);
   delay(200);
 }
 
@@ -104,8 +98,7 @@ int size = 45;    // Size of song array
 
 
 
-// ===========================================
-// ===========================================
+// ============================================================================================================================================================================
 
 
 
@@ -142,7 +135,7 @@ void setup()
 
   delay(500);
 
-  beatStick.write(110);
+  beatStick.write(90);
   location.write(10);
   position = 10;
 
@@ -153,12 +146,50 @@ void setup()
   delay(1000);
 
   Serial.println("\n\n");
+
+  delay(3000);
+
+//  Serial.println("Current position: 90");
+//  delay(1000);
+//  Serial.println("moving in direction of hitting motion (towards 110)");
+//  delay(1000);
+//  beatStick.write(110);
+//  delay(1000);
+//  beatStick.write(130);
+//  delay(1000);
+//  beatStick.write(150);
+//  delay(1000);
+//  beatStick.write(180);
+//  delay(1000);
+//  Serial.println("moving back to neutral position of 110");
+//  delay(1000);
+//  beatStick.write(110);
+//  delay(3000);
+//  Serial.println("Performing hitKey function");
+//  delay(1000);
+//  hitKey();
+//  delay(1000);
+//  Serial.println("Again");
+//  delay(1000);
+//  hitKey();
+//  delay(1000);
+//  hitKey();
+//  delay(1000);
+//  hitKey();
+//  delay(1000);
+//  hitKey();
+//  
+//  delay(1000000);
+  
 }
 
 
 
-// ===========================================
-// ===========================================
+
+
+// ============================================================================================================================================================================
+
+
 
 
 
@@ -280,5 +311,4 @@ void loop()
   Serial.println("\nRestarting sequence in 5 seconds...\n");
   
   delay(5000);
-
 }
