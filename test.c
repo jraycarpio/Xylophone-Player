@@ -32,20 +32,42 @@ void hitKey()
 }
 
 
-// test if movement of note is correct
-void testNote() {
-  moveLoc(90);
-  delay(1000);
-  
-  moveLoc(90-24);
-  delay(2000);
-  moveLoc(90-48);
-  delay(2000);
+// Define notes and song portions
 
-  moveLoc(90-24);
-  delay(2000);
-  moveLoc(90);
-  delay(2000);
+// Notes
+int n1 = 10;
+int n2 = 50;
+int n3 = 75;
+int n4 = 105;
+int n5 = 125;
+int n6 = 155;
+int n7 = 170;
+
+// Half of portion 1
+int song1_half[] = {n1, n2, n3, n4, n5, n6};
+int size1_half = 6;
+
+// Full portion 1
+int song1[] = {n1, n2, n3, n4, n5, n6, n5, n3, n4, n3, n2};
+int size1 = 11;
+
+// Full portion 2
+int song2[] = {n1, n2, n3, n4, n5, n6, n7, n5, n3, n4, n3, n2};
+int size2 = 12;
+
+// Full portion 3
+int song3[] = {n1, n2, n3, n4, n5, n6, n7, n6, n5, n4, n3, n2, n1};
+int size3 = 13;
+
+// Song portion sequence is 1, 2, 3
+
+// Song function
+
+void play(int song[], int arrSize) {
+  for (int i = 0; i <= arrSize; i++) {
+    moveLoc(song[i]);
+    hitKey();
+  }
 }
 
 void setup() {
@@ -67,7 +89,7 @@ void setup() {
   hit = 110;
   neutral = 80;
 
-  moveLoc(90);
+  moveLoc(10);
   beatStick.write(neutral);
 
   delay(1000);
@@ -81,9 +103,10 @@ void loop() {
   Serial.print("\nCurrent position is ");
   Serial.println(pos);
 
-  Serial.println("\nWhich servo would you like to control?");
-  Serial.println("1) Location");
-  Serial.println("2) Beat stick");
+  Serial.println("\nWhat would you like to do?");
+  Serial.println("1) Control location servo");
+  Serial.println("2) Control beat stick servo");
+  Serial.println("3) Play song portion");
 
   while (Serial.available() == 0) {}
   input = Serial.readString();
@@ -99,12 +122,10 @@ void loop() {
     Serial.print("You wrote ");
     Serial.println(newLoc);
     moveLoc(newLoc);  
-
-//    ans = 100;
   } 
 
   // User chooses to move beat stick servo
-  else {
+  else if (ans == 2) {
     Serial.println("\nYou chose beat stick\nWhat would you like to do?");
     Serial.println("1) Manual control\n2) Hit key function\n 3) Change hit position\n4) Change neutral position");
   
@@ -181,6 +202,32 @@ void loop() {
       Serial.println(input);
       
       neutral = input.toInt();
+    }
+  }
+
+  else {
+    Serial.println("You chose play song");
+    Serial.println("What song portion would you like to play?");
+    Serial.println("1) Half of 1st portion\n2) Full 1st\n3) Full 2nd\n4) Full 3rd");
+
+    while (Serial.available() == 0) {}
+    input = Serial.readString();
+    ans = input.toInt();
+
+    if (ans == 1) {
+      play(song1_half, size1_half);
+    }
+
+    else if (ans == 2) {
+      play(song1, size1);
+    }
+
+    else if (ans == 3) {
+      play(song2, size2);
+    }
+
+    else if (ans == 4) {
+      play(song3, size3);
     }
   }
   
