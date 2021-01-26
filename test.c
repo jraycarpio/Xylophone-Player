@@ -17,7 +17,7 @@ boolean done;
 // Move to desired location
 void moveLoc(int desired) {
   Serial.print("\nMoving to ");
-  Serial.print(pos);
+  Serial.print(desired);
   Serial.println(" step location");
   location.write(desired);
   pos = desired;
@@ -27,9 +27,8 @@ void moveLoc(int desired) {
 void hitKey()
 {
   beatStick.write(hit);
-  delay(200);
+  delay(300);
   beatStick.write(neutral);
-  delay(200);
 }
 
 
@@ -62,12 +61,14 @@ void setup() {
   delay(500);
   Serial.println("SYSTEM START\n");
   location.attach(5);
+  beatStick.attach(3);
 
   pos = 0;
   hit = 110;
-  neutral = 90;
+  neutral = 80;
 
   moveLoc(90);
+  beatStick.write(neutral);
 
   delay(1000);
 }
@@ -93,8 +94,13 @@ void loop() {
     Serial.println("\nYou chose location\nWhat position would you like to move to?");
   
     while (Serial.available() == 0) {}
+    input = Serial.readString();
     newLoc = input.toInt();
+    Serial.print("You wrote ");
+    Serial.println(newLoc);
     moveLoc(newLoc);  
+
+//    ans = 100;
   } 
 
   // User chooses to move beat stick servo
@@ -148,7 +154,7 @@ void loop() {
         ans = input.toInt();
 
         if (ans == 2) {
-          done == true;
+          done = true;
         }
       } 
     }
